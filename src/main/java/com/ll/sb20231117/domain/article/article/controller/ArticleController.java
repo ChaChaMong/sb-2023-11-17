@@ -60,9 +60,7 @@ public class ArticleController {
     String write(@Valid WriteForm writeForm){
         Article article = articleService.write(writeForm.title, writeForm.body);
 
-        String msg = "id %d, article created".formatted(article.getId());
-
-        return "redirect:/article/list?msg=" + msg;
+        return rq.redirect("/article/list", "%d번 게시물 생성되었습니다.".formatted(article.getId()));
     }
 
     @GetMapping("/article/modify/{id}")
@@ -86,18 +84,14 @@ public class ArticleController {
     String modify(@PathVariable long id, @Valid ModifyForm modifyForm){
         articleService.modify(id, modifyForm.title, modifyForm.body);
 
-        String msg = "id %d, article modified".formatted(id);
-
-        return "redirect:/article/list?msg=" + msg;
+        return rq.redirect("/article/list", "%d번 게시물 수정되었습니다.".formatted(id));
     }
 
     @GetMapping("/article/delete/{id}")
     String delete(@PathVariable long id) {
         articleService.delete(id);
 
-        String msg = "id %d, article deleted".formatted(id);
-
-        return "redirect:/article/list?msg=" + msg;
+        return rq.redirect("/article/list", "%d번 게시물 삭제되었습니다.".formatted(id));
     }
 
     @GetMapping("/article/getLastArticle")
