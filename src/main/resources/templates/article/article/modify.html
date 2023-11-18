@@ -11,31 +11,31 @@
       글 수정
     </button>
   </form>
+
+  <script>
+    function submitModifyForm(form) {
+      const inputTitle = form.title;
+      const inputBody = form.body;
+
+      inputTitle.value = inputTitle.value.trim();
+      inputBody.value = inputBody.value.trim();
+
+      const title = inputTitle.value;
+      const body = inputBody.value;
+
+      if (title.length === 0) {
+        alert('제목을 입력해주세요.');
+        inputTitle.focus();
+        return;
+      }
+
+      if (body.length === 0) {
+        alert('내용을 입력해주세요.');
+        inputBody.focus();
+        return;
+      }
+
+      form.submit();
+    }
+  </script>
 </div>
-
-<script>
-  function submitModifyForm(form) {
-    const inputTitle = form.title;
-    const inputBody = form.body;
-
-    inputTitle.value = inputTitle.value.trim();
-    inputBody.value = inputBody.value.trim();
-
-    const title = inputTitle.value;
-    const body = inputBody.value;
-
-    if (title.length === 0) {
-      alert('제목을 입력해주세요.');
-      inputTitle.focus();
-      return;
-    }
-
-    if (body.length === 0) {
-      alert('내용을 입력해주세요.');
-      inputBody.focus();
-      return;
-    }
-
-    form.submit();
-  }
-</script>
