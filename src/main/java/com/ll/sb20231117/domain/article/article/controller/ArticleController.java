@@ -2,7 +2,11 @@ package com.ll.sb20231117.domain.article.article.controller;
 
 import com.ll.sb20231117.domain.article.article.entity.Article;
 import com.ll.sb20231117.domain.article.article.service.ArticleService;
+import com.ll.sb20231117.domain.member.member.entity.Member;
+import com.ll.sb20231117.domain.member.member.service.MemberService;
 import com.ll.sb20231117.global.rq.Rq;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -15,21 +19,37 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 @Validated
 public class ArticleController {
     private final ArticleService articleService;
+    private final MemberService memberService;
     private final Rq rq;
 
     @GetMapping("/article/list")
-    String showList(Model model) {
-        List<Article> articles = articleService.findAll();
+    String showList(Model model, HttpServletRequest req) {
+        // 쿠키이름이 loginedMemberId 이것인 것의 값을 가져와서 long 타입으로 변환, 만약에 그런게 없다면, 0을 반환
+        long loginedMemberId = Optional.ofNullable(req.getCookies())
+                .stream()
+                .flatMap(Arrays::stream)
+                .filter(cookie -> cookie.getName().equals("loginedMemberId"))
+                .map(Cookie::getValue)
+                .mapToLong(Long::parseLong)
+                .findFirst()
+                .orElse(0);
 
+        List<Article> articles = articleService.findAll();
         model.addAttribute("articles", articles);
 
+        if (loginedMemberId > 0) {
+            Member loginedMember = memberService.findById(loginedMemberId).get();
+            model.addAttribute("loginedMember", loginedMember);
+        }
 
         return "article/article/list";
     }
