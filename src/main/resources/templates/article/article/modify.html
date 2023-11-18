@@ -4,18 +4,18 @@
   <li><a href="/article/list">글 목록</a></li>
 </ul>
 
-<form method="POST" onsubmit="submitWriteForm(this); return false"
+<form method="POST" onsubmit="submitModifyForm(this); return false"
       style="display: flex; flex-direction: column; gap:20px; max-width: 500px">
-  <input type="text" name="title" placeholder="제목">
-  <input type="text" name="body" placeholder="내용">
+  <input type="text" name="title" placeholder="제목" th:value="${article.title}">
+  <input type="text" name="body" placeholder="내용" th:value="${article.body}">
 
   <button type="submit">
-    글 쓰기
+    글 수정
   </button>
 </form>
 
 <script>
-  function submitWriteForm(form) {
+  function submitModifyForm(form) {
     const inputTitle = form.title;
     const inputBody = form.body;
 
