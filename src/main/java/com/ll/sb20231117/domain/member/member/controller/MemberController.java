@@ -6,6 +6,7 @@ import com.ll.sb20231117.global.rq.Rq;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -37,15 +38,18 @@ public class MemberController {
 
     @PostMapping("/member/login")
     String login(@Valid LoginForm loginForm, HttpServletRequest req, HttpServletResponse response) {
-        Member memeber = memberService.findByUsername(loginForm.username).get();
+        Member member = memberService.findByUsername(loginForm.username).get();
 
-        if (!memeber.getPassword().equals(loginForm.password)) {
+        if (!member.getPassword().equals(loginForm.password)) {
             throw new IllegalArgumentException("비번이 틀립니다");
         }
 
-        Cookie cookie = new Cookie("loginedMemberId", memeber.getId() + "");
+        Cookie cookie = new Cookie("loginedMemberId", member.getId() + "");
         cookie.setPath("/");
         response.addCookie(cookie);
+
+        HttpSession session = req.getSession();
+        session.setAttribute("loginedMemberId", member.getId());
 
         return rq.redirect("/article/list", "로그인 완료되었습니다.");
     }
