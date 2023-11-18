@@ -19,6 +19,30 @@ public class MemberController {
     private final MemberService memberService;
     private final Rq rq;
 
+    @GetMapping("/member/login")
+    String showLogin() {
+        return "member/member/login";
+    }
+
+    @Data
+    public static class LoginForm {
+        @NotBlank
+        private String username;
+        @NotBlank
+        private String password;
+    }
+
+    @PostMapping("/member/login")
+    String join(@Valid LoginForm loginForm){
+        Member memeber = memberService.findByUsername(loginForm.username).get();
+
+        if (!memeber.getPassword().equals(loginForm.password)) {
+            throw new IllegalArgumentException("비번이 틀립니다");
+        }
+
+        return rq.redirect("/article/list", "로그인 완료되었습니다.");
+    }
+
     @GetMapping("/member/join")
     String showJoin() {
         return "member/member/join";
@@ -34,8 +58,8 @@ public class MemberController {
 
     @PostMapping("/member/join")
     String join(@Valid JoinForm joinForm){
-        Member member = memberService.join(joinForm.username, joinForm.password);
+        memberService.join(joinForm.username, joinForm.password);
 
-        return rq.redirect("/member/login", "회원가입이 완료되었습니다.".formatted(member.getId()));
+        return rq.redirect("/member/login", "회원가입이 완료되었습니다.");
     }
 }
