@@ -43,8 +43,6 @@ public class ArticleController {
 
     @GetMapping("/article/write")
     String showWrite() {
-        if (!rq.isLogined()) throw new RuntimeException("로그인 후 이용해주세요.");
-
         return "article/article/write";
     }
 
@@ -58,8 +56,6 @@ public class ArticleController {
 
     @PostMapping("/article/write")
     String write(@Valid WriteForm writeForm){
-        if (!rq.isLogined()) throw new RuntimeException("로그인 후 이용해주세요.");
-
         Article article = articleService.write(rq.getMember(), writeForm.title, writeForm.body);
 
         return rq.redirect("/article/list", "%d번 게시물 생성되었습니다.".formatted(article.getId()));
@@ -67,9 +63,11 @@ public class ArticleController {
 
     @GetMapping("/article/modify/{id}")
     String showModify(Model model, @PathVariable long id) {
-        if (!rq.isLogined()) throw new RuntimeException("로그인 후 이용해주세요.");
-
         Article article = articleService.findById(id).get();
+
+        if (article == null) throw new RuntimeException("존재하지 않는 게시물입니다.");
+
+        if (!articleService.canModify(rq.getMember(), article)) throw new RuntimeException("수정권한이 없습니다.");
 
         model.addAttribute("article", article);
 
@@ -86,18 +84,26 @@ public class ArticleController {
 
     @PostMapping("/article/modify/{id}")
     String modify(@PathVariable long id, @Valid ModifyForm modifyForm){
-        if (!rq.isLogined()) throw new RuntimeException("로그인 후 이용해주세요.");
+        Article article = articleService.findById(id).get();
 
-        articleService.modify(id, modifyForm.title, modifyForm.body);
+        if (article == null) throw new RuntimeException("존재하지 않는 게시물입니다.");
+
+        if (!articleService.canModify(rq.getMember(), article)) throw new RuntimeException("수정권한이 없습니다.");
+
+        articleService.modify(article, modifyForm.title, modifyForm.body);
 
         return rq.redirect("/article/list", "%d번 게시물 수정되었습니다.".formatted(id));
     }
 
     @GetMapping("/article/delete/{id}")
     String delete(@PathVariable long id) {
-        if (!rq.isLogined()) throw new RuntimeException("로그인 후 이용해주세요.");
+        Article article = articleService.findById(id).get();
 
-        articleService.delete(id);
+        if (article == null) throw new RuntimeException("존재하지 않는 게시물입니다.");
+
+        if (!articleService.canDelete(rq.getMember(), article)) throw new RuntimeException("삭제권한이 없습니다.");
+
+        articleService.delete(article);
 
         return rq.redirect("/article/list", "%d번 게시물 삭제되었습니다.".formatted(id));
     }
