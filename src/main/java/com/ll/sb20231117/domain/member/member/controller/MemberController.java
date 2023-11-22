@@ -1,6 +1,5 @@
 package com.ll.sb20231117.domain.member.member.controller;
 
-import com.ll.sb20231117.domain.member.member.entity.Member;
 import com.ll.sb20231117.domain.member.member.service.MemberService;
 import com.ll.sb20231117.global.rq.Rq;
 import jakarta.validation.Valid;
@@ -22,35 +21,6 @@ public class MemberController {
     @GetMapping("/member/login")
     String showLogin() {
         return "member/member/login";
-    }
-
-    @Data
-    public static class LoginForm {
-        @NotBlank
-        private String username;
-        @NotBlank
-        private String password;
-    }
-
-    @PostMapping("/member/login")
-    String login(@Valid LoginForm loginForm) {
-        Member member = memberService.findByUsername(loginForm.username).get();
-
-        if (!member.getPassword().equals(loginForm.password)) {
-            throw new IllegalArgumentException("비번이 틀립니다");
-        }
-
-        rq.setSessionAttr("loginedMemberId", member.getId());
-        rq.setSessionAttr("authorities", member.getAuthorities());
-
-        return rq.redirect("/article/list", "로그인 완료되었습니다.");
-    }
-
-    @GetMapping("/member/logout")
-    String logout() {
-        rq.removeSessionAttr("loginedMemberId");
-
-        return rq.redirect("/article/list", "로그아웃 되었습니다.");
     }
 
     @GetMapping("/member/join")

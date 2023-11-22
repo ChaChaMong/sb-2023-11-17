@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.List;
 
@@ -25,11 +26,11 @@ public class Member {
         return username.equals("admin");
     }
 
-    public List<String> getAuthorities() {
+    public List<SimpleGrantedAuthority> getAuthorities() {
         if (isAdmin()) {
-            return List.of("ROLE_ADMIN");
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_MEMBER"));
         }
 
-        return List.of("ROLE_MEMBER");
+        return List.of(new SimpleGrantedAuthority("ROLE_MEMBER"));
     }
 }
