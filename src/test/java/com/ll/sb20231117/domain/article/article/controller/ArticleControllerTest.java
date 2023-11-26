@@ -121,7 +121,7 @@ public class ArticleControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(handler().handlerType(ArticleController.class))
                 .andExpect(handler().methodName("write"))
-                .andExpect(redirectedUrlPattern("/article/list?msg=**"));
+                .andExpect(redirectedUrlPattern("/?msg=**"));
         Article article = articleService.findLatest().get();
         assertThat(article.getTitle()).isEqualTo("제목 new");
         assertThat(article.getBody()).isEqualTo("내용 new");
@@ -188,7 +188,7 @@ public class ArticleControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(handler().handlerType(ArticleController.class))
                 .andExpect(handler().methodName("modify"))
-                .andExpect(redirectedUrlPattern("/article/list?msg=**"));
+                .andExpect(redirectedUrlPattern("/?msg=**"));
         Article article = articleService.findById(1L).get();
         assertThat(article.getTitle()).isEqualTo("제목 new");
         assertThat(article.getBody()).isEqualTo("내용 new");
@@ -211,10 +211,25 @@ public class ArticleControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(handler().handlerType(ArticleController.class))
                 .andExpect(handler().methodName("delete"))
-                .andExpect(redirectedUrlPattern("/article/list?msg=**"));
+                .andExpect(redirectedUrlPattern("/?msg=**"));
 
         Optional<Article> optionalArticle = articleService.findById(1L);
 
         assertThat(optionalArticle.isEmpty()).isEqualTo(true);
+    }
+
+    // GET /
+    @Test
+    @DisplayName("기본 홈 화면에서 게시물 목록 페이지로 정상 리다이렉트")
+    void t9() throws Exception {
+        // WHEN
+        ResultActions resultActions = mvc
+                .perform(get("/"))
+                .andDo(print());
+        Article article = articleService.findLatest().get();
+        // THEN
+        resultActions
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/article/list"));
     }
 }
