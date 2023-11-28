@@ -3,11 +3,13 @@ package com.ll.sb20231117.global.rq;
 import com.ll.sb20231117.domain.member.member.entity.Member;
 import com.ll.sb20231117.domain.member.member.service.MemberService;
 import com.ll.sb20231117.global.reData.RsData;
+import com.ll.sb20231117.standard.util.Ut;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -22,6 +24,7 @@ import java.util.Date;
 @Component
 @Getter
 @RequiredArgsConstructor
+@Slf4j
 public class Rq {
     private final HttpServletRequest req;
     private final HttpServletResponse resp;
@@ -110,6 +113,15 @@ public class Rq {
         req.setAttribute("msg", msg);
 
         return "global/js";
+    }
+
+    public String historyBack(Exception ex) {
+        String exStr = Ut.exception.toString(ex);
+        req.setAttribute("exStr", exStr);
+
+        log.debug(exStr);
+
+        return historyBack(ex.getMessage());
     }
 
     public String redirectOrBack(String url, RsData<?> rs) {
