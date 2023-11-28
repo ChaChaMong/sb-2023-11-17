@@ -1,6 +1,5 @@
 package com.ll.sb20231117.global.security;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -19,7 +18,7 @@ public class SecurityConfig {
                 .csrf(
                         csrf -> csrf
                                 .ignoringRequestMatchers(
-                                        PathRequest.toH2Console()
+                                        "/h2-console/**"
                                 )
                 )
                 .headers(
